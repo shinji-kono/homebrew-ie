@@ -9,6 +9,9 @@ class Cbc < Formula
   sha256 "b55dd4426265c52c517f79b2c79d0e556168c14c6ed5e79b51b6cf2f52f43e2a"
   depends_on"cmake"
   depends_on"ninja"
+  depends_on :xcode => :build
+
+  revision 1
 
   keg_only "Conflict with original clang"
 
@@ -22,18 +25,20 @@ class Cbc < Formula
          ENV['LLVM_DIR'] = buildpath
          ENV['PATH'] = ENV['PATH'] + ":/usr/local/bin"
       end 
-      system "cmake","-G","Ninja","-DCMAKE_BUILD_TYPE:STRING=Debug","-DCMAKE_INSTALL_PREFIX:PATH=#{prefix}","-DLLVM_ENABLE_PROJECTS=clang;lld","#{buildpath}/llvm"
+      args = %W[
+         -G
+         Ninja
+         -DCMAKE_BUILD_TYPE:STRING=Debug
+         -DCMAKE_INSTALL_PREFIX:PATH=#{prefix}
+         -DLLVM_ENABLE_PROJECTS=clang;lld
+         #{buildpath}/llvm
+      ]
+      sdk = MacOS.sdk_path_if_needed
+      args << "-DDEFAULT_SYSROOT=#{sdk}" if sdk
+      system "cmake",*args
       system "ninja"
       system "ninja", "install"
     end
-  end
-
-  bottle do
-    root_url "http://www.cr.ie.u-ryukyu.ac.jp/brew" # Optional root to calculate bottle URLs
-    rebuild 3
-    cellar :any
-    sha256 "ce87e33bcb2a285d366f2854fb28349a5df3426f4eb8701a23c4c4749316f74f" => :mojave
-    sha256 "ce87e33bcb2a285d366f2854fb28349a5df3426f4eb8701a23c4c4749316f74f" => :catalina
   end
 
   bottle do
@@ -44,9 +49,8 @@ class Cbc < Formula
     sha256 "3839aab15f6d12495199fe380022b4374785a5d62262efbdeda3c4311164d696" => :catalina
   end
   def pour_bottle?
-    # Only needed if this formula has to check if using the pre-built
-    # bottle is fine.
-    true
+    reason "The bottle needs the Xcode CLT to be installed."
+    satisfy { MacOS::CLT.installed? }
   end
 
 end
