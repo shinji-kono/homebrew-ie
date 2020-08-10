@@ -5,10 +5,13 @@ class Cbc < Formula
   homepage "http://www.cr.ie.u-ryukyu.ac.jp"
   url  "http://www.cr.ie.u-ryukyu.ac.jp/hg/CbC/CbC_llvm", using: :hg # , revision: "llvm10"
   head "http://www.cr.ie.u-ryukyu.ac.jp/hg/CbC/CbC_llvm", using: :hg
-  version "llvm10-1"
+  version "llvm10"
   sha256 "b55dd4426265c52c517f79b2c79d0e556168c14c6ed5e79b51b6cf2f52f43e2a"
   depends_on"cmake"
   depends_on"ninja"
+  depends_on :xcode => :build
+
+  revision 1
 
   keg_only "Conflict with original clang"
 
@@ -22,7 +25,17 @@ class Cbc < Formula
          ENV['LLVM_DIR'] = buildpath
          ENV['PATH'] = ENV['PATH'] + ":/usr/local/bin"
       end 
-      system "cmake","-G","Ninja","-DCMAKE_BUILD_TYPE:STRING=Debug","-DCMAKE_INSTALL_PREFIX:PATH=#{prefix}","-DLLVM_ENABLE_PROJECTS=clang;lld","#{buildpath}/llvm"
+      args = %W[
+         -G
+         Ninja
+         -DCMAKE_BUILD_TYPE:STRING=Debug
+         -DCMAKE_INSTALL_PREFIX:PATH=#{prefix}
+         -DLLVM_ENABLE_PROJECTS=clang;lld
+         #{buildpath}/llvm
+      ]
+      sdk = MacOS.sdk_path_if_needed
+      args << "-DDEFAULT_SYSROOT=#{sdk}" if sdk
+      system "cmake",*args
       system "ninja"
       system "ninja", "install"
     end
@@ -30,10 +43,24 @@ class Cbc < Formula
 
   bottle do
     root_url "http://www.cr.ie.u-ryukyu.ac.jp/brew" # Optional root to calculate bottle URLs
-    rebuild 3
-    root_url "https://homebrew.bintray.com/bottles-ie"
+    rebuild 4
     cellar :any
-    sha256 "ce87e33bcb2a285d366f2854fb28349a5df3426f4eb8701a23c4c4749316f74f" => :mojave
-    sha256 "ce87e33bcb2a285d366f2854fb28349a5df3426f4eb8701a23c4c4749316f74f" => :catalina
+    sha256 "3839aab15f6d12495199fe380022b4374785a5d62262efbdeda3c4311164d696" => :mojave
+    sha256 "3839aab15f6d12495199fe380022b4374785a5d62262efbdeda3c4311164d696" => :catalina
   end
+
+  bottle do
+    rebuild 5
+    root_url "http://www.cr.ie.u-ryukyu.ac.jp/brew" # Optional root to calculate bottle URLs
+    cellar :any
+    sha256 "237dd89a9f08bf85862c33f1fb685a25bb47f13a24e22a50fd1c5506781dc19b" => :mojave
+    sha256 "1ee4ef833dc2d123c7797210cd00566a5af5ae862dba603714cb2ebe57fefc15" => :catalina
+  end
+
+
+  def pour_bottle?
+    reason "The bottle needs the Xcode CLT to be installed."
+    satisfy { MacOS::CLT.installed? }
+  end
+
 end
