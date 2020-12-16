@@ -10,7 +10,7 @@ class Treevnc < Formula
   sha256 "c8fce0c77636927f800fd12115fcca4ac7c598e6149e314ac2ab16df00328041"
 
   depends_on "gradle" => :build
-  depends_on java: "1.8"
+  depends_on openjdk@11
   depends_on :x11 # if your formula requires any X11/XQuartz components
 
   def install
