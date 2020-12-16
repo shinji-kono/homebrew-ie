@@ -25,7 +25,7 @@ class CbcgccArm < Formula
 
   def install
     mktemp do
-      arm  =  Utils.popen_read("/usr/local/bin/brew","--prefix","arm-none-eabi-gcc").chomp
+      arm  =  Utils.popen_read("/usr/local/bin/brew","--prefix","cesarvandevelde/formulae/arm-none-eabi-gcc").chomp
       #path =  Utils.popen_read("/usr/bin/find","#{arm}/","-name","stddef.h","-print`")
       #inc  =  path[0..-10]
       ENV['TARGET'] = "arm-none-eabi"
