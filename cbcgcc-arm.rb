@@ -31,7 +31,7 @@ class CbcgccArm < Formula
       ENV['TARGET'] = "arm-none-eabi"
       ENV['PREFIX'] = arm+"/gcc"
       ENV['PATH'] = ENV['PATH'] + ":" + arm + "/gcc/bin"
-      File.open("make.sh", "w") { |f| f.write "\#!/bin/sh\nmake \"$@\"exit 0\n" }
+      File.open("make.sh", "w") { |f| f.write "\#!/bin/sh\nmake \"$@\"\nexit 0\n" }
       system "#{buildpath}/configure",
          "--target=arm-none-eabi",
          "--prefix=#{prefix}",
