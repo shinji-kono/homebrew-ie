@@ -31,6 +31,7 @@ class CbcgccArm < Formula
       ENV['TARGET'] = "arm-none-eabi"
       ENV['PREFIX'] = arm+"/gcc"
       ENV['PATH'] = ENV['PATH'] + ":" + arm + "/gcc/bin"
+      File.open("make.sh", "w") { |f| f.write "\#!/bin/sh\nmake \"$@\"exit 0\n" }
       system "#{buildpath}/configure",
          "--target=arm-none-eabi",
          "--prefix=#{prefix}",
@@ -50,8 +51,8 @@ class CbcgccArm < Formula
          "--with-headers=yes"
          # "--with-headers=#{arm}/gcc/arm-none-eabi/include,#{inc}"
       system "sh config.status"
-      system "make","-k","-j","20"      # for firefly
-      system "make","-k","install"
+      system "sh","make.sh","-k","-j","20"      # for firefly
+      system "sh","make.sh","-k","install"
     end
   end
 
