@@ -53,7 +53,7 @@ class CbcgccArm < Formula
       system "sh config.status"
       system "sh","make.sh","-k","-j","20"      # for firefly
       system "sh","make.sh","-k","install"
-      raise
+      # raise
     end
   end
 
