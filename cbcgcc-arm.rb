@@ -25,13 +25,14 @@ class CbcgccArm < Formula
 
   def install
     mktemp do
+      File.open("make.sh", "w") { |f| f.write "\#!/bin/sh\nmake \"$@\"\nexit 0\n" }
       arm  =  Utils.popen_read("/usr/local/bin/brew","--prefix","cesarvandevelde/formulae/arm-none-eabi-gcc").chomp
+      puts arm
       #path =  Utils.popen_read("/usr/bin/find","#{arm}/","-name","stddef.h","-print`")
       #inc  =  path[0..-10]
       ENV['TARGET'] = "arm-none-eabi"
       ENV['PREFIX'] = arm+"/gcc"
       ENV['PATH'] = ENV['PATH'] + ":" + arm + "/gcc/bin"
-      File.open("make.sh", "w") { |f| f.write "\#!/bin/sh\nmake \"$@\"\nexit 0\n" }
       system "#{buildpath}/configure",
          "--target=arm-none-eabi",
          "--prefix=#{prefix}",
