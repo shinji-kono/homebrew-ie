@@ -27,7 +27,6 @@ class CbcgccArm < Formula
     mktemp do
       File.open("make.sh", "w") { |f| f.write "\#!/bin/sh\nmake \"$@\"\nexit 0\n" }
       arm  =  Utils.popen_read("/usr/local/bin/brew","--prefix","cesarvandevelde/formulae/arm-none-eabi-gcc").chomp
-      puts arm
       #path =  Utils.popen_read("/usr/bin/find","#{arm}/","-name","stddef.h","-print`")
       #inc  =  path[0..-10]
       ENV['TARGET'] = "arm-none-eabi"
@@ -36,6 +35,7 @@ class CbcgccArm < Formula
       system "#{buildpath}/configure",
          "--target=arm-none-eabi",
          "--prefix=#{prefix}",
+         "--with-as=#{arm}/bin/arm-none-eabi-as","--with-ld=#{arm}/bin/arm-none-eabi-ld",
          "--disable-nls" ,
          "--disable-bootstrap",
          "--enable-checking=tree,rtl,assert,types",
@@ -48,7 +48,6 @@ class CbcgccArm < Formula
          "--disable-libssp", "--disable-libstdcxx-pch", "--disable-libmudflap",
          "--with-newlib",
          "--enable-interwork",
-         "--with-as=#{arm}/bin/arm-none-eabi-as","--with-ld=#{arm}/bin/arm-none-eabi-ld",
          "--with-headers=yes"
          # "--with-headers=#{arm}/gcc/arm-none-eabi/include,#{inc}"
       system "sh config.status"
